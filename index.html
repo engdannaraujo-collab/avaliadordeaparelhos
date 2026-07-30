@@ -86,6 +86,11 @@
     color:var(--green);line-height:1;margin:6px 0 4px;
   }
   .result-label{font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+  .breakdown{margin-top:20px;display:flex;flex-direction:column;gap:2px}
+  .bd-row{display:flex;justify-content:space-between;font-size:.82rem;padding:8px 0;border-bottom:1px solid var(--border);color:var(--text)}
+  .bd-row .neg{color:#ff9b8a}
+  .bd-row .pos{color:var(--green)}
+  .bd-row.base{color:#fff;font-weight:600}
 
   #erro{display:none;color:#ffb3a3;background:rgba(224,86,63,.08);border:1px solid rgba(224,86,63,.3);border-radius:10px;padding:14px 16px;font-size:.85rem;margin-bottom:20px}
 
@@ -195,6 +200,7 @@
     <div class="result-label">Valor de compra</div>
     <div class="result-value" id="resultado-valor">R$ 0</div>
     <div class="result-label" id="resultado-modelo"></div>
+    <div class="breakdown" id="resultado-breakdown"></div>
   </div>
 </main>
 
@@ -335,6 +341,14 @@
     $("resultado").style.display = "block";
     $("resultado-valor").textContent = brl(data.total);
     $("resultado-modelo").textContent = data.modelo;
+    const bd = $("resultado-breakdown");
+    let rows = `<div class="bd-row base"><span>Valor base</span><span>${brl(data.valorBase)}</span></div>`;
+    data.breakdown.forEach((b) => {
+      const cls = b.valor < 0 ? "neg" : "pos";
+      const sinal = b.valor < 0 ? "-" : "+";
+      rows += `<div class="bd-row"><span>${b.label}</span><span class="${cls}">${sinal}${brl(Math.abs(b.valor))}</span></div>`;
+    });
+    bd.innerHTML = rows;
     $("resultado").scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
